@@ -165,14 +165,21 @@ final public class AccessTokenManager {
             return;
         }
 
-        Intent intent = new Intent(context, CurrentAccessTokenExpirationBroadcastReceiver.class);
-        intent.setAction(ACTION_CURRENT_ACCESS_TOKEN_CHANGED);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        try
+        {
+            Intent intent = new Intent(context, CurrentAccessTokenExpirationBroadcastReceiver.class);
+            intent.setAction(ACTION_CURRENT_ACCESS_TOKEN_CHANGED);
+            PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 
-        alarmManager.set(
-                AlarmManager.RTC,
-                accessToken.getExpires().getTime(),
-                alarmIntent);
+            alarmManager.set(
+                    AlarmManager.RTC,
+                    accessToken.getExpires().getTime(),
+                    alarmIntent);
+        }
+        catch (SecurityException exception)
+        {
+            Log.e(TAG, "Facebook alarm exception " + exception.getLocalizedMessage());
+        }
     }
 
     void extendAccessTokenIfNeeded() {
